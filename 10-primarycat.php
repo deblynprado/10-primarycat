@@ -48,6 +48,28 @@ function pricat_get_categories( $post ) {
 }
 
 /**
+ * Getting all posts that has a Primary Category setup
+ * @return array Array that contains PostID and Primary Category
+ */
+function get_all_primary() {
+  $latest_posts = get_posts( $args );
+  $posts_pricat = array();
+  $i = 0;
+  $args = array(
+    'numberposts' => -1
+  );
+
+  foreach ( $latest_posts as $post ) {
+    if ( get_post_meta( $post->ID, 'pricat_get_categories', true ) ) :
+      $posts_pricat[$i]['id'] = $post->ID;
+      $posts_pricat[$i]['primary'] = get_post_meta( $post->ID, 'pricat_get_categories', true );
+      $i++;
+    endif;
+  }
+  return $posts_pricat;
+}
+
+/**
  * Show a select that contains all category taxonomy itens
  * @param  array $categories Object from pricat_get_categories function
  * @param  string $meta The current Primary Category setup for the post
@@ -70,7 +92,8 @@ function pricat_select( $categories, $meta ) {
   }
   ?>
 </select>
-<?php return;
+<?php
+return;
 }
 
 add_action( 'save_post', 'pricat_save' );
@@ -93,3 +116,8 @@ function pricat_save(){
  * Includes our metabox on edit.php page
  */
 include( PLUGIN_PATH . 'classes/10-primarycat-metabox.php' );
+
+/**
+ * Includes custom Widget
+ */
+include( PLUGIN_PATH . 'classes/10-primarycat-widget.php' );
