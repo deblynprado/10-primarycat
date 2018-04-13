@@ -1,10 +1,14 @@
 <?php
+/**
+ * 10up Primary Category Widget
+ * Create a Widget that shows a list of posts from selected Primary Category
+ * @since 1.0.0
+ */
 add_action( 'widgets_init', 'register_pricat_widget' );
 function register_pricat_widget() {
   register_widget( 'pricat_widget' );
 }
 
-// Creating the widget
 class pricat_widget extends WP_Widget {
 
   function __construct() {
@@ -15,6 +19,12 @@ class pricat_widget extends WP_Widget {
     );
   }
 
+  /**
+   * Primary Category Widget
+   * @param  array $args     WordPress Default args for widgets
+   * @param  array $instance Array that contains all fields for each Widget instance
+   * @return null
+   */
   public function widget( $args, $instance ) {
     $title = apply_filters( 'widget_title', $instance['title'] );
 
@@ -41,6 +51,11 @@ class pricat_widget extends WP_Widget {
     echo $args['after_widget'];
   }
 
+  /**
+   * Check $instance array and create the widget form on Dashboard
+   * @param  array $instance Array that contains values from form fields.
+   * @return null
+   */
   public function form( $instance ) {
     if ( isset( $instance[ 'title' ] ) ) {
       $title = $instance[ 'title' ];
@@ -77,7 +92,10 @@ class pricat_widget extends WP_Widget {
       <?php
     }
 
-// Updating widget replacing old instances with new
+/**
+ * Updates database with the new values on form
+ * @return array               a new $instance array that contains the values on database
+ */
     public function update( $new_instance, $old_instance ) {
       $instance = array();
       $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
