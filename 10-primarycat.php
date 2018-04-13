@@ -38,16 +38,19 @@ function pricat_get_categories( $post ) {
     'hide_empty' => false
   );
   $categories = get_categories( $param );
+  pricat_select( $categories, $meta_element_class );
+}
+
+function pricat_select( $categories, $meta ) {
   wp_nonce_field( 'pricat_get_categories', 'event-dropdown' );
   ?>
-
   <select name="pricat-dropdown" id="pricat-dropdown">
-    <?php if ( !( $meta_element_class ) ): ?>
+    <?php if ( !( $meta ) ): ?>
       <option value=""><?php echo esc_attr_e( 'Primary Category', '10pricat' ); ?></option>
     <?php endif;
 
     foreach ( $categories as $category ) { ?>
-    <option value="<?php _e( $category->category_nicename ); ?>" <?php selected( $category->category_nicename, $meta_element_class, true ) ?>>
+    <option value="<?php _e( $category->category_nicename ); ?>" <?php selected( $category->category_nicename, $meta, true ) ?>>
       <?php _e( $category->cat_name ); ?>
 
     </option>
@@ -57,21 +60,8 @@ function pricat_get_categories( $post ) {
 </select>
 <?php }
 
-add_action( 'add_meta_boxes', 'pricat_metaboxes' );
-function pricat_metaboxes() {
-  add_meta_box(
-    'pricat-metabox',
-    __( 'Primary Category', '10pricat' ),
-    'pricat_get_categories',
-    null,
-    'side',
-    'high',
-    null
-  );
-}
-
-add_action('save_post', 'so_save_metabox');
-function so_save_metabox(){
+add_action( 'save_post', 'pricat_save' );
+function pricat_save(){
   global $post;
   if( !isset( $_POST["pricat-dropdown"] ) || ! wp_verify_nonce( $_POST['event-dropdown'], 'pricat_get_categories' ) ) {
     return;
@@ -80,3 +70,5 @@ function so_save_metabox(){
     update_post_meta( $post->ID, 'pricat_get_categories', $meta_element_class );
   }
 }
+
+include( PLUGIN_PATH . 'classes/10-primarycat-metabox.php' );
