@@ -52,12 +52,12 @@ function pricat_get_categories( $post ) {
  * @return array Array that contains PostID and Primary Category
  */
 function get_all_primary() {
-  $latest_posts = get_posts( $args );
-  $posts_pricat = array();
-  $i = 0;
   $args = array(
     'numberposts' => -1
   );
+  $latest_posts = get_posts( $args );
+  $posts_pricat = array();
+  $i = 0;
 
   foreach ( $latest_posts as $post ) {
     if ( get_post_meta( $post->ID, 'pricat_get_categories', true ) ) :
