@@ -112,12 +112,12 @@ function pricat_save(){
   return;
 }
 
-/**
- * Includes our metabox on edit.php page
- */
+
+// Includes our metabox on edit.php page
 include( PLUGIN_PATH . 'classes/10-primarycat-metabox.php' );
 
-/**
- * Includes custom Widget
- */
+// Includes custom Widget
 include( PLUGIN_PATH . 'classes/10-primarycat-widget.php' );
+
+// Includes [10primary] shortcode
+include( PLUGIN_PATH . 'classes/10-primarycat-shortcode.php' );
