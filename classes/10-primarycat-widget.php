@@ -31,12 +31,17 @@ class pricat_widget extends WP_Widget {
 
 // Widget Backend
   public function form( $instance ) {
-    if ( isset( $instance[ 'title' ] ) ) :
+    if ( isset( $instance[ 'title' ] ) ) {
       $title = $instance[ 'title' ];
-    endif;
+    }
+    else {
+      $title = "";
+    }
 
     if ( isset( $instance['select'] ) ):
       $select = $instance['select'];
+    else:
+      $select = "";
     endif; ?>
 
     <p>
@@ -46,9 +51,11 @@ class pricat_widget extends WP_Widget {
     <p>
       <select name="<?php echo $this->get_field_name( 'select' ); ?>" id="<?php echo $this->get_field_id( 'select' ); ?>">
         <?php $primary_posts = get_all_primary(); ?>
-        <?php foreach ( $primary_posts as $pp ) { ?>
-          <option value="<?php echo $pp['primary']; ?>" <?php selected( $select, $key, false ); ?>>
-            <?php echo $pp['primary']; ?>
+        <?php foreach ( $primary_posts as $key => $pp ) {
+          $category = get_category_by_slug( $pp['primary'] );
+          ?>
+          <option value="<?php echo $pp['primary']; ?>" <?php selected( $select, $pp['primary'], true ); ?>>
+            <?php echo $category->name; ?>
 
           </option>
         <?php
