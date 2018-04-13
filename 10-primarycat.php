@@ -32,25 +32,32 @@ define( 'PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 function __construct() {
 }
 
-function pricat_get_categories() { ?>
-<select name="event-dropdown">
-  <option value=""><?php echo esc_attr_e( 'Select Event', '10pricat' ); ?></option>
-  <?php
+function pricat_get_categories( $post ) {
+  $meta_element_class = get_post_meta( $post->ID, 'pricat_get_categories', true );
   $param = array(
     'hide_empty' => false
-  ) ;
+  );
   $categories = get_categories( $param );
+  wp_nonce_field( 'pricat_get_categories', 'event-dropdown' );
+  ?>
 
-  foreach ( $categories as $category ) {
-    printf( '<option value="%1$s">%2$s</option>',
-      esc_attr( '/category/archives/' . $category->category_nicename ),
-      esc_html( $category->cat_name )
-    );
+  <select name="pricat-dropdown" id="pricat-dropdown">
+    <?php if ( !( $meta_element_class ) ): ?>
+      <option value=""><?php echo esc_attr_e( 'Primary Category', '10pricat' ); ?></option>
+    <?php endif;
+
+    foreach ( $categories as $category ) { ?>
+    <option value="<?php _e( $category->category_nicename ); ?>" <?php selected( $category->category_nicename, $meta_element_class, true ) ?>>
+      <?php _e( $category->cat_name ); ?>
+
+    </option>
+    <?php
   }
   ?>
 </select>
 <?php }
 
+add_action( 'add_meta_boxes', 'pricat_metaboxes' );
 function pricat_metaboxes() {
   add_meta_box(
     'pricat-metabox',
@@ -63,5 +70,13 @@ function pricat_metaboxes() {
   );
 }
 
-
-add_action( 'add_meta_boxes', 'pricat_metaboxes' );
+add_action('save_post', 'so_save_metabox');
+function so_save_metabox(){
+  global $post;
+  if( !isset( $_POST["pricat-dropdown"] ) || ! wp_verify_nonce( $_POST['event-dropdown'], 'pricat_get_categories' ) ) {
+    return;
+  } else {
+    $meta_element_class = $_POST['pricat-dropdown'];
+    update_post_meta( $post->ID, 'pricat_get_categories', $meta_element_class );
+  }
+}
