@@ -32,6 +32,11 @@ define( 'PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 function __construct() {
 }
 
+/**
+ * Get all itens on category taxonomy and get current post Primary Category
+ * @param  array $post Global WordPress $post object
+ * @return  null
+ */
 function pricat_get_categories( $post ) {
   $meta_element_class = get_post_meta( $post->ID, 'pricat_get_categories', true );
   $param = array(
@@ -39,8 +44,15 @@ function pricat_get_categories( $post ) {
   );
   $categories = get_categories( $param );
   pricat_select( $categories, $meta_element_class );
+  return;
 }
 
+/**
+ * Show a select that contains all category taxonomy itens
+ * @param  array $categories Object from pricat_get_categories function
+ * @param  string $meta The current Primary Category setup for the post
+ * @return null
+ */
 function pricat_select( $categories, $meta ) {
   wp_nonce_field( 'pricat_get_categories', 'event-dropdown' );
   ?>
@@ -58,9 +70,14 @@ function pricat_select( $categories, $meta ) {
   }
   ?>
 </select>
-<?php }
+<?php return;
+}
 
 add_action( 'save_post', 'pricat_save' );
+/**
+ * Save the Primary Category
+ * @return null
+ */
 function pricat_save(){
   global $post;
   if( !isset( $_POST["pricat-dropdown"] ) || ! wp_verify_nonce( $_POST['event-dropdown'], 'pricat_get_categories' ) ) {
@@ -69,6 +86,10 @@ function pricat_save(){
     $meta_element_class = $_POST['pricat-dropdown'];
     update_post_meta( $post->ID, 'pricat_get_categories', $meta_element_class );
   }
+  return;
 }
 
+/**
+ * Includes our metabox on edit.php page
+ */
 include( PLUGIN_PATH . 'classes/10-primarycat-metabox.php' );

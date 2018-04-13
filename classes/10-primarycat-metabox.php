@@ -6,6 +6,10 @@
  */
 
 add_action( 'add_meta_boxes', 'pricat_metaboxes' );
+/**
+ * Creates a metabox and set on Top Left
+ * @return null
+ */
 function pricat_metaboxes() {
   add_meta_box(
     'pricat-metabox',
@@ -16,4 +20,5 @@ function pricat_metaboxes() {
     'high',
     null
   );
+  return;
 }
